@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVerse | Top 50 Popular Books</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:     #060a14;
+            --card:   #0d1526;
+            --accent: #4ade80;
+            --text:   #e2e8f0;
+            --muted:  #64748b;
+            --border: rgba(255,255,255,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(6,10,20,0.95);
+            border: none; border-radius: 0;
+            padding: 0 30px;
+            box-shadow: 0 1px 0 var(--border), 0 4px 30px rgba(0,0,0,0.5);
+        }
+        .navbar-brand {
+            color: var(--accent) !important;
+            font-family: 'DM Serif Display', serif;
+            font-size: 28px;
+        }
+        .navbar-nav li a {
+            color: var(--muted) !important;
+            font-size: 13px; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+        .navbar-nav li a:hover { color: var(--accent) !important; }
+
+        /* HERO */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 50px;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(74,222,128,0.1);
+            border: 1px solid rgba(74,222,128,0.2);
+            color: var(--accent);
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            padding: 5px 14px; border-radius: 100px;
+            margin-bottom: 22px;
+        }
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(38px, 6vw, 66px);
+            color: white; line-height: 1.1;
+            margin-bottom: 16px;
+        }
+        .hero h1 em { color: var(--accent); font-style: italic; }
+        .hero p {
+            color: var(--muted); font-size: 16px;
+            max-width: 500px; margin: 0 auto; line-height: 1.8;
+        }
+
+        /* BOOK CARD — entire card is a link */
+        .book-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            margin-bottom: 28px;
+        }
+        .book-link:hover { text-decoration: none; color: inherit; }
+
+        .book-card {
+            background: var(--card);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.35s cubic-bezier(.22,.68,0,1.2),
+                        box-shadow 0.35s ease,
+                        border-color 0.3s;
+            height: 100%;
+        }
+        .book-link:hover .book-card {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(74,222,128,0.25);
+            border-color: rgba(74,222,128,0.25);
+        }
+
+        .img-wrap { position: relative; overflow: hidden; }
+        .book-img {
+            width: 100%; height: 300px;
+            object-fit: cover; display: block;
+            transition: transform 0.5s ease;
+        }
+        .book-link:hover .book-img { transform: scale(1.07); }
+
+        .img-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(6,10,20,0.85) 0%, transparent 55%);
+            transition: opacity 0.3s;
+        }
+        .view-pill {
+            position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%) translateY(6px);
+            background: var(--accent); color: #060a14;
+            font-size: 12px; font-weight: 700;
+            padding: 6px 18px; border-radius: 100px;
+            opacity: 0; white-space: nowrap;
+            transition: opacity 0.3s, transform 0.3s;
+            letter-spacing: 0.5px;
+        }
+        .book-link:hover .view-pill {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+
+        .book-body { padding: 16px; }
+        .book-title {
+            font-family: 'DM Serif Display', serif;
+            color: white; font-size: 16px; line-height: 1.4;
+            min-height: 50px;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .book-author { color: var(--muted); font-size: 13px; margin-top: 8px; }
+        .book-meta { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .pill {
+            background: rgba(74,222,128,0.08);
+            border: 1px solid rgba(74,222,128,0.15);
+            color: var(--accent);
+            font-size: 12px; font-weight: 500;
+            padding: 3px 10px; border-radius: 100px;
+        }
+
+        .footer {
+            text-align: center; color: var(--muted);
+            padding: 50px 20px 30px; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">ShelfIQ</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/">Home</a></li>
+            <li><a href="/recommend">Recommend</a></li>
+            
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="hero">
+        <div class="hero-badge">✦ Curated Collection</div>
+        <h1>Top 50 <em>Popular</em> Books</h1>
+        <p>Click any book to see details and discover similar reads.</p>
+    </div>
+
+    <div class="row">
+        {% for i in range(book_name|length) %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a class="book-link" href="/book/{{ book_name[i]|urlencode }}">
+                <div class="book-card">
+                    <div class="img-wrap">
+                        <img class="book-img"
+                            src="{{ image[i] if image[i] else 'https://via.placeholder.com/200x300?text=No+Image' }}"
+                            onerror="this.src='https://via.placeholder.com/200x300?text=No+Image';">
+                        <div class="img-overlay"></div>
+                        <div class="view-pill">View Details</div>
+                    </div>
+                    <div class="book-body">
+                        <div class="book-title">{{ book_name[i] }}</div>
+                        <div class="book-author">{{ author[i] }}</div>
+                        <div class="book-meta">
+                            <span class="pill">⭐ {{ rating[i] }}</span>
+                            <span class="pill">{{ votes[i] }} votes</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="footer">© 2026 BookVerse · Built with Flask & Machine Learning</div>
+</div>
+
+</body>
+</html>

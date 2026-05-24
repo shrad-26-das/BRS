@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVerse | {{ selected_book.title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:     #060a14;
+            --card:   #0d1526;
+            --panel:  #0f1c30;
+            --accent: #4ade80;
+            --text:   #e2e8f0;
+            --muted:  #64748b;
+            --border: rgba(255,255,255,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text); min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(6,10,20,0.97);
+            border: none; border-radius: 0;
+            padding: 0 30px;
+            box-shadow: 0 1px 0 var(--border), 0 4px 30px rgba(0,0,0,0.5);
+        }
+        .navbar-brand {
+            color: var(--accent) !important;
+            font-family: 'DM Serif Display', serif; font-size: 28px;
+        }
+        .navbar-nav li a {
+            color: var(--muted) !important;
+            font-size: 13px; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+        .navbar-nav li a:hover { color: var(--accent) !important; }
+
+        /* BREADCRUMB */
+        .breadcrumb-bar {
+            padding: 20px 0 0;
+            font-size: 13px; color: var(--muted);
+        }
+        .breadcrumb-bar a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+        .breadcrumb-bar a:hover { color: var(--accent); }
+        .breadcrumb-bar span { color: var(--text); }
+
+        /* HERO SECTION */
+        .book-hero {
+            padding: 40px 0 60px;
+        }
+
+        /* COVER */
+        .cover-col { padding-right: 40px; }
+        @media(max-width:767px) { .cover-col { padding-right: 15px; margin-bottom: 30px; } }
+
+        .cover-wrap {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .cover-img {
+            width: 100%; max-width: 280px;
+            border-radius: 20px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+            display: block;
+        }
+        .cover-glow {
+            position: absolute; inset: -20px;
+            background: radial-gradient(ellipse at center, rgba(74,222,128,0.12), transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: -1;
+        }
+
+        /* DETAILS */
+        .detail-col { padding-top: 10px; }
+
+        .genre-tag {
+            display: inline-block;
+            background: rgba(74,222,128,0.1);
+            border: 1px solid rgba(74,222,128,0.2);
+            color: var(--accent); font-size: 11px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            padding: 5px 14px; border-radius: 100px; margin-bottom: 18px;
+        }
+
+        .book-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(28px, 5vw, 52px);
+            color: white; line-height: 1.15;
+            margin-bottom: 12px;
+        }
+        .book-author {
+            color: var(--accent); font-size: 17px;
+            font-weight: 500; margin-bottom: 30px;
+        }
+
+        /* STATS ROW */
+        .stats-row {
+            display: flex; gap: 16px; flex-wrap: wrap;
+            margin-bottom: 34px;
+        }
+        .stat-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 22px; text-align: center;
+            min-width: 90px;
+        }
+        .stat-val { font-size: 22px; font-weight: 700; color: white; }
+        .stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-top: 4px; }
+
+        /* ACTION BUTTONS */
+        .actions { display: flex; gap: 14px; flex-wrap: wrap; }
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4ade80, #16a34a);
+            color: #060a14; font-weight: 700; font-size: 15px;
+            padding: 14px 30px; border-radius: 14px;
+            border: none; cursor: pointer; text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block; letter-spacing: 0.3px;
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74,222,128,0.4);
+            color: #060a14; text-decoration: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted); font-size: 15px; font-weight: 500;
+            padding: 14px 28px; border-radius: 14px;
+            text-decoration: none; transition: border-color 0.2s, color 0.2s;
+            display: inline-block;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(74,222,128,0.3);
+            color: var(--accent); text-decoration: none;
+        }
+
+        /* DIVIDER */
+        .section-divider {
+            border: none; border-top: 1px solid var(--border);
+            margin: 0 0 60px;
+        }
+
+        /* RECOMMENDATIONS SECTION */
+        .rec-section { padding-bottom: 70px; }
+        .rec-heading {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(26px, 4vw, 40px);
+            color: white; margin-bottom: 8px;
+        }
+        .rec-heading em { color: var(--accent); font-style: italic; }
+        .rec-subtext { color: var(--muted); font-size: 15px; margin-bottom: 40px; }
+
+        /* REC CARDS */
+        .rec-link {
+            display: block; text-decoration: none;
+            color: inherit; margin-bottom: 26px;
+        }
+        .rec-link:hover { text-decoration: none; color: inherit; }
+
+        .rec-card {
+            background: var(--card);
+            border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s, border-color 0.3s;
+            height: 100%;
+        }
+        .rec-link:hover .rec-card {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 45px rgba(0,0,0,0.55), 0 0 0 1px rgba(74,222,128,0.2);
+            border-color: rgba(74,222,128,0.2);
+        }
+
+        .rec-img-wrap { position: relative; overflow: hidden; }
+        .rec-img {
+            width: 100%; height: 260px;
+            object-fit: cover; display: block;
+            transition: transform 0.5s;
+        }
+        .rec-link:hover .rec-img { transform: scale(1.06); }
+
+        .rec-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(6,10,20,0.8) 0%, transparent 50%);
+        }
+        .rec-view {
+            position: absolute; bottom: 12px; left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: var(--accent); color: #060a14;
+            font-size: 11px; font-weight: 700;
+            padding: 5px 16px; border-radius: 100px;
+            opacity: 0; white-space: nowrap;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .rec-link:hover .rec-view { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .rec-body { padding: 16px; }
+        .rec-title {
+            font-family: 'DM Serif Display', serif;
+            color: white; font-size: 15px; line-height: 1.4;
+            min-height: 46px;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .rec-author { color: var(--muted); font-size: 12px; margin-top: 7px; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center; padding: 60px 20px;
+            color: var(--muted); font-size: 16px;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+
+        .footer {
+            text-align: center; color: var(--muted);
+            padding: 40px 20px 30px; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">ShelfIQ</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/">Home</a></li>
+            <li><a href="/recommend">Recommend</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-bar">
+        <a href="/">Home</a> &nbsp;/&nbsp;
+        <a href="/recommend">Recommend</a> &nbsp;/&nbsp;
+        <span>{{ selected_book.title }}</span>
+    </div>
+
+    <!-- BOOK HERO -->
+    <div class="book-hero">
+        <div class="row">
+
+            <!-- COVER -->
+            <div class="col-md-3 col-sm-4 cover-col">
+                <div class="cover-wrap">
+                    <div class="cover-glow"></div>
+                    <img class="cover-img"
+                        src="{{ selected_book.image }}"
+                        onerror="this.src='https://via.placeholder.com/280x400?text=No+Image'">
+                </div>
+            </div>
+
+            <!-- DETAILS -->
+            <div class="col-md-9 col-sm-8 detail-col">
+                <div class="genre-tag">✦ Book Details</div>
+                <div class="book-title">{{ selected_book.title }}</div>
+                <div class="book-author">✍ {{ selected_book.author }}</div>
+
+                <div class="stats-row">
+                    {% if selected_book.rating is defined %}
+                    <div class="stat-box">
+                        <div class="stat-val">{{ selected_book.rating }}</div>
+                        <div class="stat-lbl">⭐ Rating</div>
+                    </div>
+                    {% endif %}
+                    {% if selected_book.votes is defined %}
+                    <div class="stat-box">
+                        <div class="stat-val">{{ selected_book.votes }}</div>
+                        <div class="stat-lbl">👍 Votes</div>
+                    </div>
+                    {% endif %}
+                    <div class="stat-box">
+                        <div class="stat-val">{{ recs|length }}</div>
+                        <div class="stat-lbl">📚 Similar</div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="/recommend?q={{ selected_book.title|urlencode }}" class="btn-primary-custom">
+                        Find More Like This →
+                    </a>
+                    <a href="/" class="btn-ghost">← Back to Home</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- RECOMMENDATIONS -->
+    <div class="rec-section">
+        <div class="rec-heading">Books <em>Similar</em> to This</div>
+        <div class="rec-subtext">Readers who enjoyed this book also loved these titles.</div>
+
+        {% if recs %}
+        <div class="row">
+            {% for book in recs %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <a class="rec-link" href="/book/{{ book.title|urlencode }}">
+                    <div class="rec-card">
+                        <div class="rec-img-wrap">
+                            <img class="rec-img"
+                                src="{{ book.image }}"
+                                onerror="this.src='https://via.placeholder.com/300x400?text=No+Image';">
+                            <div class="rec-overlay"></div>
+                            <div class="rec-view">View Details</div>
+                        </div>
+                        <div class="rec-body">
+                            <div class="rec-title">{{ book.title }}</div>
+                            <div class="rec-author">✍ {{ book.author }}</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">📖</div>
+            No similar books found for this title.
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">© 2026 BookVerse · Built with Flask & Machine Learning</div>
+</div>
+
+</body>
+</html>
