@@ -322,7 +322,7 @@
                 <div class="book-card">
                     <div class="img-wrap">
                         <img class="book-img"
-                            src="{{ image[i] if image[i] else 'https://via.placeholder.com/200x300?text=No+Image' }}"
+                            src="{{ image[i] if image[i] else '' }}"
                             data-title="{{ book_name[i] }}"
                             data-author="{{ author[i] }}">
                         <div class="img-overlay"></div>
@@ -344,7 +344,7 @@
         {% endfor %}
     </div>
 
-    <div class="footer">© 2026 ShelfIQ · Built with <em>Flask</em> & <em>Machine Learning</em></div>
+    <div class="footer">© 2026 BookVerse · Built with <em>Flask</em> & <em>Machine Learning</em></div>
 </div>
 
 <script>
@@ -368,11 +368,11 @@
         
         placeholder.style.background = `linear-gradient(135deg, ${colorPair[0]}, ${colorPair[1]})`;
         placeholder.style.width = '100%';
-        placeholder.style.height = '320px';
+        placeholder.style.height = '300px';
         placeholder.style.display = 'flex';
         placeholder.style.flexDirection = 'column';
         placeholder.style.justifyContent = 'space-between';
-        placeholder.style.padding = '24px';
+        placeholder.style.padding = '20px';
         placeholder.style.color = '#ffffff';
         placeholder.style.borderRadius = '20px 20px 0 0';
         placeholder.style.boxSizing = 'border-box';
